@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.practice.robert.receipts.MainActivity">
+    <LinearLayout
+        android:id="@+id/linLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_weight="2">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/showView"
+            android:layout_weight="1"
+            android:layout_centerHorizontal="true"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/inputView"
+            android:layout_below="@+id/showView"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:hint="請輸入後三碼" />
+
+
+
+
+    </LinearLayout>
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:stretchColumns="*"
+        android:layout_weight="3"
+        android:id="@+id/tableLayout"
+        android:layout_below="@+id/linLayout"
+        android:layout_alignParentBottom="true">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_weight="1">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="1"
+                android:id="@+id/button01"
+
+
+                 />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="2"
+                android:id="@+id/button02"
+
+               />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="3"
+                android:id="@+id/button03"
+
+                />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_weight="1">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="4"
+                android:id="@+id/button04"
+
+                 />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="5"
+                android:id="@+id/button05"
+
+                 />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="6"
+                android:id="@+id/button06"
+
+                />
+        </TableRow>
+        <TableRow
+            android:layout_weight="1">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="7"
+                android:id="@+id/button07"
+
+                />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="8"
+                android:id="@+id/button08"
+
+                 />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="9"
+                android:id="@+id/button09"
+
+                 />
+    </TableRow>
+        <TableRow
+            android:layout_weight="1">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="中獎"
+                android:id="@+id/buttonChck"
+
+              />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="0"
+                android:id="@+id/button00"
+
+                />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="clear"
+                android:id="@+id/buttonClear"
+
+                />
+
+        </TableRow>
+
+
+
+
+    </TableLayout>
+
+
+
+
+
+
+</RelativeLayout>
