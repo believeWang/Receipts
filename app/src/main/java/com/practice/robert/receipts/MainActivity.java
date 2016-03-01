@@ -5,6 +5,9 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -16,8 +19,9 @@ import java.util.ArrayList;
 
 
 //http://blog.csdn.net/ChaoY1116/article/details/45224467   <<解析詳解
-public class MainActivity extends AppCompatActivity {
-    Button btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btnCheck, btnClear;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    Button  btnCheck, btnClear;
+    Button []numBtn;
 //找到UI工人的經紀人，這樣才能派遣工作  (找到顯示畫面的UI Thread上的Handler)
 
     private Handler mUI_Handler = new Handler();
@@ -36,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
     String allPrize1="";
     String allPrize2="";
     String allPrize3="";
-
+    String checkAry[];
+    boolean isChangedStat=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,9 +63,6 @@ public class MainActivity extends AppCompatActivity {
         mThreadHandler = new Handler(mThread.getLooper());
 
 
-        //請經紀人指派工作名稱 r，給工人做
-
-        mThreadHandler.post(r1);
 
 
     }
@@ -75,7 +77,9 @@ public class MainActivity extends AppCompatActivity {
             //.............................
             getXML();
 
-            test();
+           // test();
+            isChangedStat=true;
+            invalidateOptionsMenu();
         }
 
     };
@@ -93,17 +97,16 @@ public class MainActivity extends AppCompatActivity {
         list1=new ArrayList<Prize>();
         list2=new ArrayList<Prize>();
         list3=new ArrayList<Prize>();
+        numBtn=new Button[10];
+        int btnID[]={R.id.button00,R.id.button01,R.id.button02,R.id.button03,R.id.button04,R.id.button05,R.id.button06,R.id.button07,R.id.button08,R.id.button09};
 
-        btn0 = (Button) findViewById(R.id.button00);
-        btn1 = (Button) findViewById(R.id.button01);
-        btn2 = (Button) findViewById(R.id.button02);
-        btn3 = (Button) findViewById(R.id.button03);
-        btn4 = (Button) findViewById(R.id.button04);
-        btn5 = (Button) findViewById(R.id.button05);
-        btn6 = (Button) findViewById(R.id.button06);
-        btn7 = (Button) findViewById(R.id.button07);
-        btn8 = (Button) findViewById(R.id.button08);
-        btn9 = (Button) findViewById(R.id.button09);
+        for(int i=0;i<numBtn.length;i++){
+            numBtn[i]= (Button) findViewById(btnID[i]);
+            numBtn[i].setOnClickListener(this);
+            numBtn[i].setVisibility(View.INVISIBLE);
+        }
+
+
 
 
         showTextView = (TextView) findViewById(R.id.showView);
@@ -140,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if (tag!=null&&tag.compareTo("title") == 0) {
                             int indext= parser.getText().indexOf("統一");
-                            Log.i("title", "title = " + parser.getText()+":"+indext);
+                            // Log.i("title", "title = " + parser.getText()+":"+indext);
                             if(indext<0){
 
                                 if(list1.size()==0){
@@ -150,11 +153,11 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 else if(list2.size()==0){
                                     list2.add(new Prize(parser.getText()));
-                                    Log.e("list2.size()", "" + list2.size());
+
                                 }
                                 else {
                                     list3.add(new Prize(parser.getText()));
-                                    Log.e("list3.size()", "" + list3.size());
+
                                 }
 
                             };
@@ -162,13 +165,13 @@ public class MainActivity extends AppCompatActivity {
                         }else if(tag!=null&&tag.compareTo("description") == 0){
 
                             String str=parser.getText().replaceAll("<[^>]+>", "");//把XML檔裡面 的<TAG>都消除
-                            Log.i("descriptionB", "description = " +str);
+                            //Log.i("descriptionB", "description = " +str);
                             String[]tempAry=str.split("\\D");
                             int indext= str.indexOf("統一");
                             if(indext<0){
                                 if(allPrize1.equals("")){
                                     allPrize1=str;
-                                    Log.e("list1.size()", "" + list1.size());
+                                  //  Log.e("list1.size()", "" + list1.size());
                                     putInArray(list1,tempAry);
 
                                 }
@@ -287,4 +290,122 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    //menu
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        /*可以看到傳入的第一個參數是groupId, 代表你是屬於那一個Group，
+                      通常都會設定為Menu.NONE
+                     第二個參數代表你是Menu裡面第幾個Item, 由0開始, 因此Menu有一個常數是First
+                     所以通常都會寫成Menu.First
+                     第三個參數是你放入Item的順序,
+                    假如你都設為Menu.NONE代表你使用預設, 系統會幫你安排順序
+                    第 四個參數就是你想要放入的標題
+                    加入5個item*/
+        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, "download");
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        /*Toast.makeText(getApplicationContext(),
+                item.getTitle()+"",
+                Toast.LENGTH_SHORT).show();*/
+        switch (item.getItemId()){
+            case  Menu.FIRST:
+                mThreadHandler.post(r1);
+                break;
+            case Menu.FIRST+1:
+                cutNum(1);
+                showTextView.setText(allPrize1);
+            break;
+            case Menu.FIRST+2:
+                cutNum(2);
+                showTextView.setText(allPrize2);
+                break;
+            case Menu.FIRST+3:
+                cutNum(3);
+                showTextView.setText(allPrize3);
+                break;
+            default:Log.e("OPTION","ERROR");
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+        if(isChangedStat) {
+            menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, "reload");
+
+            menu.add(Menu.NONE, Menu.FIRST+1, Menu.NONE,list1.get(0).getName() );
+            menu.add(Menu.NONE, Menu.FIRST+2, Menu.NONE,list2.get(0).getName() );
+            menu.add(Menu.NONE, Menu.FIRST+3, Menu.NONE,list3.get(0).getName() );
+
+
+        } else {
+            menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, "download");
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+    private  void cutNum(int selected){
+        switch (selected){
+            case 1:
+                checkAry=getAry(list1);
+                break;
+            case 2:
+                checkAry=getAry(list2);
+                break;
+            case 3:
+                checkAry=getAry(list3);
+                break;
+            default:
+                Log.e("cutNumber","ERROR");
+                break;
+        }
+
+
+    }
+    private  String[] getAry(ArrayList<Prize> listSeperated){
+        String []tempAry=new String[listSeperated.size()-1];
+
+            for(int i=1;i<listSeperated.size();i++){
+
+            String num= listSeperated.get(i).getNumbers().trim();
+            if(num.length()>3){
+                tempAry[i-1]=num.substring(num.length() - 3, num.length());
+            }else{
+                tempAry[i-1]=num;
+            }
+
+
+        }
+        //test
+        for(int i=0;i<tempAry.length;i++){
+            Log.i("tempAry",i+":"+tempAry[i]);
+        }
+        return  tempAry;
+
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+     void hideButton(){
+         if(inputTextView.getText().length()==0){
+            for(int i=0;i<checkAry.length;i++){
+               numBtn[checkAry[i].charAt(0)].setVisibility(View.VISIBLE);
+                      }
+
+         }else if(inputTextView.getText().length()==1){
+             for(int i=0;i<checkAry.length;i++){
+                 numBtn[checkAry[i].charAt(0)].setVisibility(View.VISIBLE);
+             }
+
+         }else if(inputTextView.getText().length()==2){
+
+         }
+     }
 }
