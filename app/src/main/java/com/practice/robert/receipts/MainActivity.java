@@ -20,11 +20,12 @@ import java.util.ArrayList;
 
 //http://blog.csdn.net/ChaoY1116/article/details/45224467   <<解析詳解
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    Button  btnCheck, btnClear;
-    Button []numBtn;
+    Button btnCheck, btnClear;
+    Button[] numBtn;
+    int btnID[] = {R.id.button00, R.id.button01, R.id.button02, R.id.button03, R.id.button04, R.id.button05, R.id.button06, R.id.button07, R.id.button08, R.id.button09};
 //找到UI工人的經紀人，這樣才能派遣工作  (找到顯示畫面的UI Thread上的Handler)
 
-    private Handler mUI_Handler = new Handler();
+
 
     //宣告特約工人的經紀人
 
@@ -34,14 +35,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private HandlerThread mThread;
     TextView showTextView, inputTextView;
-    ArrayList<Prize>list1;
-    ArrayList<Prize>list2;
-    ArrayList<Prize>list3;
-    String allPrize1="";
-    String allPrize2="";
-    String allPrize3="";
+    ArrayList<Prize> list1;
+    ArrayList<Prize> list2;
+    ArrayList<Prize> list3;
+    String allPrize1 = "";
+    String allPrize2 = "";
+    String allPrize3 = "";
     String checkAry[];
-    boolean isChangedStat=false;
+    int status;
+    boolean isChangedStat = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,50 +66,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mThreadHandler = new Handler(mThread.getLooper());
 
 
-
-
     }
 
     private Runnable r1 = new Runnable() {
 
         public void run() {
 
-            // TODO Auto-generated method stub
 
 
             //.............................
             getXML();
 
-           // test();
-            isChangedStat=true;
+            // test();
+            isChangedStat = true;
             invalidateOptionsMenu();
         }
 
     };
-    private void test(){
+
+    private void test() {
 
         Log.i("list1", list1.toString());
-        Log.i("list2",list2.toString());
-        Log.i("list3",list3.toString());
+        Log.i("list2", list2.toString());
+        Log.i("list3", list3.toString());
         Log.i("allPrize1", allPrize1.toString());
-        Log.i("allPrize2",allPrize2.toString());
+        Log.i("allPrize2", allPrize2.toString());
         Log.i("allPrize3", allPrize3.toString());
 
     }
-    private void setView() {
-        list1=new ArrayList<Prize>();
-        list2=new ArrayList<Prize>();
-        list3=new ArrayList<Prize>();
-        numBtn=new Button[10];
-        int btnID[]={R.id.button00,R.id.button01,R.id.button02,R.id.button03,R.id.button04,R.id.button05,R.id.button06,R.id.button07,R.id.button08,R.id.button09};
 
-        for(int i=0;i<numBtn.length;i++){
-            numBtn[i]= (Button) findViewById(btnID[i]);
+    private void setView() {
+        list1 = new ArrayList<Prize>();
+        list2 = new ArrayList<Prize>();
+        list3 = new ArrayList<Prize>();
+        numBtn = new Button[10];
+
+
+        for (int i = 0; i < numBtn.length; i++) {
+            numBtn[i] = (Button) findViewById(btnID[i]);
             numBtn[i].setOnClickListener(this);
             numBtn[i].setVisibility(View.INVISIBLE);
         }
+        btnCheck= (Button) findViewById(R.id.buttonChck);
+        btnCheck.setOnClickListener(this);
 
-
+        btnClear= (Button) findViewById(R.id.buttonClear);
+        btnClear.setOnClickListener(this);
 
 
         showTextView = (TextView) findViewById(R.id.showView);
@@ -126,11 +131,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
             int parserEvent = parser.getEventType();
-            String tag=null;
+            String tag = null;
             boolean inTitle = false;
-            int cnt=0;//不要撈太多資料
+            int cnt = 0;//不要撈太多資料
             //xml结束时，就报告该事件
-            while (parserEvent != XmlPullParser.END_DOCUMENT&&cnt<3) {
+            while (parserEvent != XmlPullParser.END_DOCUMENT && cnt < 3) {
 
                 switch (parserEvent) {
         /* TEXT
@@ -140,55 +145,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     case XmlPullParser.TEXT:
 
 
-
-                        if (tag!=null&&tag.compareTo("title") == 0) {
-                            int indext= parser.getText().indexOf("統一");
+                        if (tag != null && tag.compareTo("title") == 0) {
+                            int indext = parser.getText().indexOf("統一");
                             // Log.i("title", "title = " + parser.getText()+":"+indext);
-                            if(indext<0){
+                            if (indext < 0) {
 
-                                if(list1.size()==0){
+                                if (list1.size() == 0) {
 
                                     list1.add(new Prize(parser.getText()));
 
-                                }
-                                else if(list2.size()==0){
+                                } else if (list2.size() == 0) {
                                     list2.add(new Prize(parser.getText()));
 
-                                }
-                                else {
+                                } else {
                                     list3.add(new Prize(parser.getText()));
 
                                 }
 
-                            };
+                            }
+                            ;
 
-                        }else if(tag!=null&&tag.compareTo("description") == 0){
+                        } else if (tag != null && tag.compareTo("description") == 0) {
 
-                            String str=parser.getText().replaceAll("<[^>]+>", "");//把XML檔裡面 的<TAG>都消除
+                            String str = parser.getText().replaceAll("<[^>]+>", "");//把XML檔裡面 的<TAG>都消除
                             //Log.i("descriptionB", "description = " +str);
-                            String[]tempAry=str.split("\\D");
-                            int indext= str.indexOf("統一");
-                            if(indext<0){
-                                if(allPrize1.equals("")){
-                                    allPrize1=str;
-                                  //  Log.e("list1.size()", "" + list1.size());
-                                    putInArray(list1,tempAry);
+                            String[] tempAry = str.split("\\D");
+                            int indext = str.indexOf("統一");
+                            if (indext < 0) {
+                                if (allPrize1.equals("")) {
+                                    allPrize1 = str;
+                                    //  Log.e("list1.size()", "" + list1.size());
+                                    putInArray(list1, tempAry);
 
-                                }
-                                else  if(allPrize2.equals("")){
-                                    putInArray(list2,tempAry);
-                                    allPrize2=str;
-                                }
-                                else  if(allPrize3.equals("")){
-                                    putInArray(list3,tempAry);
-                                    allPrize3=str;
+                                } else if (allPrize2.equals("")) {
+                                    putInArray(list2, tempAry);
+                                    allPrize2 = str;
+                                } else if (allPrize3.equals("")) {
+                                    putInArray(list3, tempAry);
+                                    allPrize3 = str;
                                 }
                                 cnt++;
                             }
 
 
                         }
-
 
 
                         break;
@@ -228,8 +228,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private  void putInArray(ArrayList<Prize>list,String[]tempAry){
-        for(int i=0;i<tempAry.length;i++) {
+    private void putInArray(ArrayList<Prize> list, String[] tempAry) {
+        for (int i = 0; i < tempAry.length; i++) {
             if (!("".equals(tempAry[i]))) {
                 switch (list.size()) {
                     case 1:
@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         list.add(new Prize("六獎", tempAry[i]));
                         break;
                     default:
-                        Log.e("wrong", "獎項數目錯誤"+list.size());
+                        Log.e("wrong", "獎項數目錯誤" + list.size());
 
 
                 }
@@ -306,42 +306,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, "download");
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         /*Toast.makeText(getApplicationContext(),
                 item.getTitle()+"",
                 Toast.LENGTH_SHORT).show();*/
-        switch (item.getItemId()){
-            case  Menu.FIRST:
+        switch (item.getItemId()) {
+            case Menu.FIRST:
                 mThreadHandler.post(r1);
+                inputTextView.setHint("左上角選擇月份");
                 break;
-            case Menu.FIRST+1:
-                cutNum(1);
-                showTextView.setText(allPrize1);
-            break;
-            case Menu.FIRST+2:
-                cutNum(2);
-                showTextView.setText(allPrize2);
+            case Menu.FIRST + 1:
+                inputTextView.setHint("input last three number");
+                status = 1;
+                checkAry = getAry(list1);
+                checkNum();
+               // showTextView.setText(allPrize1);
                 break;
-            case Menu.FIRST+3:
-                cutNum(3);
-                showTextView.setText(allPrize3);
+            case Menu.FIRST + 2:
+                inputTextView.setHint("input last three number");
+                status = 2;
+                checkAry = getAry(list2);
+                checkNum();
+               // showTextView.setText(allPrize2);
                 break;
-            default:Log.e("OPTION","ERROR");
+            case Menu.FIRST + 3:
+                inputTextView.setHint("input last three number");
+                status = 3;
+                checkAry = getAry(list3);
+                checkNum();
+               // showTextView.setText(allPrize3);
+                break;
+            default:
+                Log.e("OPTION", "ERROR");
 
         }
 
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.clear();
-        if(isChangedStat) {
+        if (isChangedStat) {
             menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, "reload");
 
-            menu.add(Menu.NONE, Menu.FIRST+1, Menu.NONE,list1.get(0).getName() );
-            menu.add(Menu.NONE, Menu.FIRST+2, Menu.NONE,list2.get(0).getName() );
-            menu.add(Menu.NONE, Menu.FIRST+3, Menu.NONE,list3.get(0).getName() );
+            menu.add(Menu.NONE, Menu.FIRST + 1, Menu.NONE, list1.get(0).getName());
+            menu.add(Menu.NONE, Menu.FIRST + 2, Menu.NONE, list2.get(0).getName());
+            menu.add(Menu.NONE, Menu.FIRST + 3, Menu.NONE, list3.get(0).getName());
 
 
         } else {
@@ -349,63 +362,134 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return super.onPrepareOptionsMenu(menu);
     }
-    private  void cutNum(int selected){
-        switch (selected){
-            case 1:
-                checkAry=getAry(list1);
-                break;
-            case 2:
-                checkAry=getAry(list2);
-                break;
-            case 3:
-                checkAry=getAry(list3);
-                break;
-            default:
-                Log.e("cutNumber","ERROR");
-                break;
+
+    private void checkNum() {
+        hideButton();
+        if (inputTextView.getText().length() == 0) {
+
+            for (int i = 0; i < checkAry.length; i++) {
+
+                numBtn[Integer.parseInt(checkAry[i].substring(0, 1))].setVisibility(View.VISIBLE);
+            }
+
+        } else if (inputTextView.getText().length() == 1) {
+
+            for (int i = 0; i < checkAry.length; i++) {
+                if (inputTextView.getText().charAt(0) == checkAry[i].charAt(0))
+                    numBtn[Integer.parseInt(checkAry[i].substring(1, 2))].setVisibility(View.VISIBLE);
+            }
+
+        } else if (inputTextView.getText().length() == 2) {
+
+            for (int i = 0; i < checkAry.length; i++) {
+                if (inputTextView.getText().charAt(1) == checkAry[i].charAt(1) && (inputTextView.getText().charAt(0) == checkAry[i].charAt(0)))
+                    numBtn[Integer.parseInt(checkAry[i].substring(2, 3))].setVisibility(View.VISIBLE);
+            }
+        } else if (inputTextView.getText().length() == 3) {
+            String prizeName = "";
+            switch (status) {
+                case 1:
+                    for (int i = 1; i < list1.size(); i++) {
+                        if (list1.get(i).getNumbers().indexOf(inputTextView.getText().toString()) >= 0)
+                            prizeName = list1.get(i).getName();
+                    }
+                    break;
+                case 2:
+                    for (int i = 1; i < list2.size(); i++) {
+                        if (list2.get(i).getNumbers().indexOf(inputTextView.getText().toString()) >= 0)
+                            prizeName = list2.get(i).getName();
+                    }
+                    break;
+                case 3:
+                    for (int i = 1; i < list3.size(); i++) {
+                        if (list3.get(i).getNumbers().indexOf(inputTextView.getText().toString()) >= 0)
+                            prizeName = list3.get(i).getName();
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            if (!prizeName.equals(""))
+                inputTextView.setHint("BINGOOOOO!!" + prizeName + ":" + inputTextView.getText() + "!!!!!!");
+            else
+                inputTextView.setHint("NO" + inputTextView.getText());
+
+            inputTextView.setText("");
+
+            for (int i = 0; i < checkAry.length; i++) {
+
+                numBtn[Integer.parseInt(checkAry[i].substring(0, 1))].setVisibility(View.VISIBLE);
+            }
         }
 
 
     }
-    private  String[] getAry(ArrayList<Prize> listSeperated){
-        String []tempAry=new String[listSeperated.size()-1];
 
-            for(int i=1;i<listSeperated.size();i++){
+    void hideButton() {
+        for (int i = 0; i < numBtn.length; i++) {
+            numBtn[i].setVisibility(View.INVISIBLE);
+        }
+    }
 
-            String num= listSeperated.get(i).getNumbers().trim();
-            if(num.length()>3){
-                tempAry[i-1]=num.substring(num.length() - 3, num.length());
-            }else{
-                tempAry[i-1]=num;
+    private String[] getAry(ArrayList<Prize> listSeperated) {
+        String[] tempAry = new String[listSeperated.size() - 1];
+
+        for (int i = 1; i < listSeperated.size(); i++) {
+
+            String num = listSeperated.get(i).getNumbers().trim();
+            if (num.length() > 3) {
+                tempAry[i - 1] = num.substring(num.length() - 3, num.length());
+            } else {
+                tempAry[i - 1] = num;
             }
 
 
         }
         //test
-        for(int i=0;i<tempAry.length;i++){
-            Log.i("tempAry",i+":"+tempAry[i]);
+        for (int i = 0; i < tempAry.length; i++) {
+            Log.i("tempAry", i + ":" + tempAry[i]);
         }
-        return  tempAry;
+        return tempAry;
 
     }
 
     @Override
     public void onClick(View v) {
+        if (v.getId() == R.id.buttonChck) {
+            if (showTextView.getText().length() == 0)
+                switch (status) {
+                    case 1:
+                        showTextView.setText(allPrize1);
+                        break;
+                    case 2:
+                        showTextView.setText(allPrize2);
+                        break;
+                    case 3:
+                        showTextView.setText(allPrize3);
+                        break;
+                    default:
+                        showTextView.setText("Plz download first");
+                        break;
+                }
+            else showTextView.setText("");
+            return;
 
+        }else if(v.getId() == R.id.buttonClear){
+            if( inputTextView.getText().equals("")){
+                return;
+            }
+            inputTextView.setText("");
+            inputTextView.setHint("");
+            checkNum();
+            return;
+        }
+        for (int i = 0; i < numBtn.length; i++) {
+            if (v.getId() == btnID[i])
+                inputTextView.setText(inputTextView.getText().toString() + i);
+        }
+
+        checkNum();
     }
-     void hideButton(){
-         if(inputTextView.getText().length()==0){
-            for(int i=0;i<checkAry.length;i++){
-               numBtn[checkAry[i].charAt(0)].setVisibility(View.VISIBLE);
-                      }
 
-         }else if(inputTextView.getText().length()==1){
-             for(int i=0;i<checkAry.length;i++){
-                 numBtn[checkAry[i].charAt(0)].setVisibility(View.VISIBLE);
-             }
-
-         }else if(inputTextView.getText().length()==2){
-
-         }
-     }
 }
